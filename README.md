@@ -96,7 +96,7 @@ Contiene el archivo `docker-compose.yml` y configuraciones relacionadas para des
 ## Instalación y Ejecución
 
 1. Clona cada repositorio de este proyecto.
-2. Levanta una base de datos Oracle SQL por medio de docker.
+2. Levantar una base de datos Oracle SQL por medio de docker.
 3. Configura las variables de entorno en el archivo `application.properties` o `application.yml` según corresponda.
 4. Navega al repositorio `microservicio-docker-compose` y ejecuta:
 
