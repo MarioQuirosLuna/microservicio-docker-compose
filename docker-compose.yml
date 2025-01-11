@@ -1,0 +1,92 @@
+services:
+  config-server:
+    container_name: config-server
+    image: config-server:v1
+    ports:
+      - "8888:8888"
+    restart: always
+    networks:
+      - springcloud
+  eureka-server:
+    container_name: eureka-server
+    image: eureka-server:v1
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - springcloud
+  oracle-db:
+    container_name: oracle-db
+    image: oracle-db-express:latest
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    restart: always
+    networks:
+      - springcloud
+    environment:
+      ORACLE_PDB: ORCLPDB1
+      ORACLE_PWD: mySecurePassword
+  microservicio-product:
+    #container_name: microservicio-product
+    image: microservicio-product:v1
+    deploy:
+      replicas: 3
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - oracle-db
+  microservicio-item:
+    container_name: microservicio-item
+    image: microservicio-item:v1
+    restart: always
+    ports:
+      - "8002:8002"
+      - "8005:8005"
+      - "8007:8007"
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - microservicio-product
+  microservicio-users:
+    container_name: microservicio-users
+    image: microservicio-users:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - oracle-db
+  microservicio-oauth:
+    container_name: microservicio-oauth
+    image: microservicio-oauth:v1
+    restart: always
+    ports:
+      - "9100:9100"
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - microservicio-users
+  gateway-server:
+    container_name: gateway-server
+    image: gateway-server:v1
+    restart: always
+    ports:
+      - "8090:8090"
+    networks:
+      - springcloud
+    environment:
+      - IP_ADDR=http://192.168.100.36:9100
+    depends_on:
+      - eureka-server
+      - microservicio-item
+      - microservicio-product
+      - microservicio-users
+      - microservicio-oauth
+networks:
+  springcloud:
+    
